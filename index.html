@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Harish G — Python & GenAI engineer building production LLM agents, RAG and MCP tooling. Chennai, India.">
+<meta property="og:title" content="Harish G — AI Engineer">
+<meta property="og:description" content="I build AI agents that ship: LangGraph, RAG, MCP, FastAPI.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>">
+<title>Harish G — AI Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: an agent "trace viewer" — the hero is a live trace of an agent answering "Who is Harish?", the career is a span waterfall, case studies read like incident → fix → result. Cool graph-paper ground, one cobalt accent, amber/teal reserved for span kinds. */
+:root{
+  --bg:#F3F5FA; --surface:#FFFFFF; --ink:#111628; --muted:#5A6378; --line:#D9DEEA; --grid:rgba(17,22,40,.045);
+  --accent:#2F55E6; --accent-soft:rgba(47,85,230,.10);
+  --tool:#C98A0B; --tool-soft:rgba(201,138,11,.13);
+  --llm:#0E8F8F; --llm-soft:rgba(14,143,143,.12);
+  --ok:#1E8E4E;
+  --display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", Roboto, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0C1020; --surface:#141A30; --ink:#E7EBF7; --muted:#9AA4BE; --line:#262E4A; --grid:rgba(231,235,247,.045);
+  --accent:#7D98FF; --accent-soft:rgba(125,152,255,.14);
+  --tool:#F0B43C; --tool-soft:rgba(240,180,60,.14);
+  --llm:#3CC7C2; --llm-soft:rgba(60,199,194,.13); --ok:#4CC27E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C1020; --surface:#141A30; --ink:#E7EBF7; --muted:#9AA4BE; --line:#262E4A; --grid:rgba(231,235,247,.045);
+  --accent:#7D98FF; --accent-soft:rgba(125,152,255,.14);
+  --tool:#F0B43C; --tool-soft:rgba(240,180,60,.14);
+  --llm:#3CC7C2; --llm-soft:rgba(60,199,194,.13); --ok:#4CC27E; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.6 var(--body);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:28px 28px;}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:clamp(16px,4vw,40px);padding-block:0}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;letter-spacing:-.02em}
+.mono{font-family:var(--mono)}
+.eyebrow{font:600 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
+/* nav */
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;backdrop-filter:blur(10px);
+  background:color-mix(in srgb,var(--bg) 82%,transparent);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:12px;flex-wrap:wrap}
+.brand{font:800 18px/1 var(--display);color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:10px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px color-mix(in srgb,var(--ok) 22%,transparent)}
+nav ul{display:flex;gap:18px;list-style:none;margin:0;padding:0;flex-wrap:wrap}
+nav ul a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500}
+nav ul a:hover{color:var(--ink)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(24px,4vw,56px);align-items:center;padding-block:clamp(36px,7vw,84px) 36px}
+.hero>*{min-width:0}
+.status{display:inline-flex;align-items:center;gap:8px;font:500 13px/1 var(--mono);color:var(--ok);
+  background:color-mix(in srgb,var(--ok) 10%,transparent);border:1px solid color-mix(in srgb,var(--ok) 30%,transparent);padding:8px 12px;border-radius:999px}
+.hero h1{font-size:clamp(44px,7.4vw,92px);line-height:.95;font-weight:800;margin-top:20px}
+.hero h1 .thin{display:block;font-weight:500;color:var(--muted);font-size:.42em;letter-spacing:-.01em;margin-top:14px;line-height:1.15}
+.hero h1 .hl{background:linear-gradient(transparent 62%,var(--accent-soft) 62%)}
+.lede{font-size:clamp(17px,1.6vw,19px);color:var(--muted);max-width:52ch;margin:22px 0 0}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.btn{display:inline-flex;align-items:center;gap:8px;font:600 15px/1 var(--body);padding:14px 18px;border-radius:12px;text-decoration:none;border:1px solid var(--line);color:var(--ink);background:var(--surface);cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn:hover{transform:translateY(-1px)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.primary{color:#0C1020}}
+:root[data-theme="dark"] .btn.primary{color:#0C1020}
+
+/* trace panel */
+.trace{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:0 30px 60px -30px rgba(17,22,40,.35);overflow:hidden}
+.trace-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);font:500 12px/1.3 var(--mono);color:var(--muted)}
+.lights{display:flex;gap:6px}.lights i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.q{padding:16px 16px 6px;font:600 14px/1.4 var(--mono)}
+.q b{color:var(--accent)}
+.spans{list-style:none;margin:0;padding:6px 16px 4px;display:grid;gap:8px}
+.span{display:grid;grid-template-columns:20px 1fr auto;gap:10px;align-items:start;font:13px/1.45 var(--mono)}
+.span .k{width:20px;height:20px;border-radius:6px;display:grid;place-items:center;font-size:10px;font-weight:700}
+.span.tool .k{background:var(--tool-soft);color:var(--tool)} .span.llm .k{background:var(--llm-soft);color:var(--llm)}
+.span .n{min-width:0}.span .n span{color:var(--muted)}
+.span .t{color:var(--muted);font-variant-numeric:tabular-nums}
+.span .bar{grid-column:2/4;height:4px;border-radius:4px;background:var(--line);position:relative;overflow:hidden}
+.span .bar::after{content:"";position:absolute;inset:0;left:var(--s);width:var(--w);border-radius:4px;background:var(--c)}
+.span.tool{--c:var(--tool)} .span.llm{--c:var(--llm)}
+.answer{margin:12px 16px 16px;padding:14px;border-radius:12px;background:var(--accent-soft);font:14px/1.55 var(--body)}
+.answer .mono{font-size:12px;color:var(--accent);display:block;margin-bottom:6px;font-weight:600}
+.caret{display:inline-block;width:8px;height:16px;background:var(--accent);vertical-align:-3px;margin-left:2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.scan{animation:scan 3.2s ease-in-out infinite}
+@keyframes scan{0%,100%{filter:none}50%{filter:brightness(1.15)}}
+
+/* metrics */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-block:24px 12px}
+.metric{background:var(--surface);padding:22px 20px;min-width:0}
+.metric strong{display:block;font:800 clamp(30px,4vw,44px)/1 var(--display);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.metric span{display:block;color:var(--muted);font-size:14px;margin-top:8px}
+
+section{padding-block:clamp(48px,7vw,88px) 0}
+.sec-head{display:flex;align-items:end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:26px}
+.sec-head h2{font-size:clamp(30px,4vw,46px);line-height:1.02;font-weight:800;max-width:18ch}
+.sec-head p{color:var(--muted);max-width:44ch;margin:0}
+
+/* about */
+.about{display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(24px,4vw,56px);align-items:start}
+.about>*{min-width:0}
+.about-h{font-size:clamp(32px,4.4vw,52px);line-height:1;font-weight:800;margin-top:10px}
+.story p{margin:0 0 14px;font-size:17px;max-width:62ch}
+.path{list-style:none;margin:20px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px;align-items:center;counter-reset:p}
+.path li{display:flex;align-items:center;gap:8px;font:600 13px/1 var(--mono);color:var(--muted)}
+.path li span{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.path li:last-child span{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.path li+li::before{content:"→";color:var(--muted)}
+.offclock{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.offclock span{font:500 14px/1 var(--body);padding:9px 12px;border-radius:999px;background:var(--tool-soft);color:var(--ink)}
+@media (max-width:900px){.about{grid-template-columns:1fr}}
+
+/* case studies */
+.cases{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.case{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px;display:grid;gap:14px;align-content:start}
+.case.feature{grid-column:1/-1;grid-template-columns:1.1fr 1fr;gap:28px;align-items:center}
+.case.feature>*{min-width:0}
+.case-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.tag{font:600 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:6px 8px;border-radius:6px;background:var(--accent-soft);color:var(--accent)}
+.case h3{font-size:clamp(21px,2.2vw,26px);line-height:1.15;font-weight:700}
+.big{font:800 clamp(40px,6vw,64px)/1 var(--display);letter-spacing:-.04em;color:var(--accent)}
+.flow{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.flow li{display:grid;grid-template-columns:74px 1fr;gap:12px;font-size:15px;color:var(--ink)}
+.flow li b{font:600 11px/1.9 var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 12px/1 var(--mono);padding:6px 8px;border:1px solid var(--line);border-radius:6px;color:var(--muted)}
+.compare{display:grid;gap:10px}
+.cmp-row{display:grid;grid-template-columns:72px 1fr 64px;gap:10px;align-items:center;font:13px/1 var(--mono);color:var(--muted)}
+.cmp-bar{height:14px;border-radius:4px;background:var(--line);overflow:hidden}
+.cmp-bar i{display:block;height:100%;border-radius:4px}
+.cmp-row .v{text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+
+/* waterfall */
+.waterfall{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;overflow-x:auto}
+.wf{min-width:640px;display:grid;gap:10px}
+.wf-axis,.wf-row{display:grid;grid-template-columns:230px 1fr;gap:16px;align-items:center}
+.wf-ticks{display:grid;grid-template-columns:repeat(4,1fr);font:12px/1 var(--mono);color:var(--muted);border-bottom:1px dashed var(--line);padding-bottom:8px}
+.wf-label{font-size:14px;line-height:1.3}
+.wf-label small{display:block;color:var(--muted);font:12px/1.4 var(--mono)}
+.wf-track{position:relative;height:26px;background:repeating-linear-gradient(90deg,transparent 0 calc(25% - 1px),var(--line) calc(25% - 1px) 25%)}
+.wf-span{position:absolute;top:4px;bottom:4px;border-radius:6px;left:var(--s);width:var(--w);background:var(--c);display:flex;align-items:center;padding-inline:8px;font:600 11px/1 var(--mono);color:#fff;white-space:nowrap;overflow:hidden}
+
+/* stack */
+.stack{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.stack-col{border-top:2px solid var(--ink);padding-top:14px}
+.stack-col h3{font:700 18px/1.2 var(--display);margin-bottom:12px}
+.stack-col ul{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:15px}
+.stack-col li{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding-bottom:8px}
+.stack-col li span{color:var(--muted);font:12px/1.6 var(--mono)}
+
+/* beyond */
+.beyond{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.beyond div{padding:20px;border-radius:var(--r);border:1px dashed var(--line);background:color-mix(in srgb,var(--surface) 70%,transparent)}
+.beyond h3{font:700 18px/1.25 var(--display);margin-bottom:6px}
+.beyond p{margin:0;color:var(--muted);font-size:15px}
+
+/* contact */
+.contact{margin-block:clamp(56px,8vw,96px) 40px;background:var(--ink);color:var(--bg);border-radius:24px;padding:clamp(28px,5vw,56px);display:grid;grid-template-columns:1.2fr 1fr;gap:32px;align-items:center}
+.contact>*{min-width:0}
+.contact h2{font-size:clamp(32px,5vw,56px);line-height:1;font-weight:800}
+.contact p{color:color-mix(in srgb,var(--bg) 70%,transparent);margin:14px 0 0}
+.c-list{display:grid;gap:10px}
+.c-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-radius:12px;background:color-mix(in srgb,var(--bg) 8%,transparent);border:1px solid color-mix(in srgb,var(--bg) 16%,transparent);flex-wrap:wrap}
+.c-item span{font:12px/1 var(--mono);text-transform:uppercase;letter-spacing:.1em;color:color-mix(in srgb,var(--bg) 60%,transparent)}
+.c-item a,.c-item code{color:var(--bg);font:600 15px/1.3 var(--body);text-decoration:none;word-break:break-all;user-select:all}
+.copy{font:600 12px/1 var(--mono);padding:8px 10px;border-radius:8px;border:1px solid color-mix(in srgb,var(--bg) 30%,transparent);background:transparent;color:var(--bg);cursor:pointer}
+footer{padding-block:0 40px;color:var(--muted);font:12px/1.6 var(--mono);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+@media (max-width:900px){
+  .hero,.case.feature,.contact{grid-template-columns:1fr}
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .stack,.beyond{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .cases{grid-template-columns:1fr}
+  nav ul{display:none}
+  .flow li{grid-template-columns:1fr;gap:2px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<nav aria-label="Main">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="dot" aria-hidden="true"></span>Harish G</a>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#timeline">Timeline</a></li>
+      <li><a href="#stack">Stack</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="wrap" id="top">
+  <header class="hero">
+    <div>
+      <span class="status"><span class="dot" aria-hidden="true"></span>Open to AI Engineer roles · Chennai / Bengaluru / Remote</span>
+      <h1>I build AI agents <span class="hl">that ship</span>.
+        <span class="thin">Python &amp; GenAI engineer working on LLM agents, RAG and the backends that run them in production.</span></h1>
+      <p class="lede">3+ years at iLink Digital, mostly as a core engineer on an enterprise, multi-tenant platform where companies build, run and govern LLM agents. I care about the unglamorous part: making agents fast, safe and honest when real users depend on them.</p>
+      <div class="cta">
+        <a class="btn primary" href="#work">See the work ↓</a>
+        <a class="btn" href="Harish_G_Resume.pdf" download>Resume (PDF)</a>
+        <a class="btn" href="https://www.linkedin.com/in/harishgopi2001" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a class="btn" href="https://github.com/harishg-ai" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+    </div>
+
+    <figure class="trace" aria-label="Agent trace: an AI agent answering who Harish is" style="margin:0">
+      <div class="trace-head"><div class="lights" aria-hidden="true"><i></i><i></i><i></i></div><span>trace · agent/who-is-harish</span><span>4.2s</span></div>
+      <div class="q"><b>user ›</b> Who is Harish, and why should we hire him?</div>
+      <ul class="spans">
+        <li class="span llm"><span class="k">AI</span><span class="n">plan <span>· decide which tools to call</span></span><span class="t">0.3s</span><span class="bar" style="--s:0%;--w:8%"></span></li>
+        <li class="span tool"><span class="k">fn</span><span class="n">review_projects <span>→ agent platform, service desk agent</span></span><span class="t">1.1s</span><span class="bar" style="--s:8%;--w:26%"></span></li>
+        <li class="span tool"><span class="k">fn</span><span class="n">get_impact_metrics <span>→ ~30× faster, 75% automated</span></span><span class="t">0.9s</span><span class="bar" style="--s:34%;--w:22%"></span></li>
+        <li class="span tool"><span class="k">fn</span><span class="n">read_stack <span>→ LangGraph, RAG, MCP, FastAPI</span></span><span class="t">0.6s</span><span class="bar" style="--s:56%;--w:15%"></span></li>
+        <li class="span llm"><span class="k">AI</span><span class="n">compose_answer <span>· grounded, cited</span></span><span class="t">1.3s</span><span class="bar" style="--s:71%;--w:29%"></span></li>
+      </ul>
+      <div class="answer scan"><span class="mono">assistant ›</span>A Python/GenAI engineer who has shipped LangGraph agents, RAG and MCP tooling to enterprise users, cut a key response path ~30×, and fixes the production issues most demos never meet.<span class="caret" aria-hidden="true"></span></div>
+    </figure>
+  </header>
+
+  <div class="metrics" role="list">
+    <div class="metric" role="listitem"><strong>~30×</strong><span>faster on a key agent response path</span></div>
+    <div class="metric" role="listitem"><strong>3+ yrs</strong><span>shipping production AI and backend systems</span></div>
+    <div class="metric" role="listitem"><strong>75%</strong><span>less manual L1 ticket handling with an AI service desk agent</span></div>
+    <div class="metric" role="listitem"><strong>50,000+</strong><span>employees can reach the Teams service desk agent</span></div>
+  </div>
+
+  <section id="about" aria-labelledby="about-h">
+    <div class="about">
+      <div>
+        <p class="eyebrow">About</p>
+        <h2 id="about-h" class="about-h">From circuits to agents.</h2>
+      </div>
+      <div class="story">
+        <p>I studied Electronics &amp; Communication Engineering, and like many of my classmates, campus placement brought me into IT. I started as a Python developer, building APIs and the business logic behind them.</p>
+        <p>When the AI wave arrived, I wanted to be the one building the AI layer on top of our products. I explored frameworks for chatbots, then for agents, and then helped build a full AI agent development studio where teams design, run and govern their own agents.</p>
+        <p>Today I build agents for IT infrastructure and operations: agents that raise and track tickets, reset accounts, check systems and answer from company knowledge, inside the tools people already use.</p>
+        <p>Off the clock I'm an athlete at heart. I play basketball and badminton competitively, and I'm happiest travelling or out on a trek. Team sports taught me most of what I know about working in a team: show up, cover for each other, and keep going in the last quarter.</p>
+        <div class="offclock" aria-label="Outside work">
+          <span>🏀 Basketball</span><span>🏸 Badminton</span><span>🥾 Trekking</span><span>✈️ Travel</span>
+        </div>
+        <ol class="path" aria-label="My path">
+          <li><span>ECE graduate</span></li>
+          <li><span>Python APIs</span></li>
+          <li><span>Chatbots</span></li>
+          <li><span>Agent studio</span></li>
+          <li><span>IT-ops agents</span></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section id="work">
+    <div class="sec-head">
+      <h2>Selected work</h2>
+      <p>Each one started as a real problem in production. Here is what broke, what I changed, and what happened next.</p>
+    </div>
+
+    <div class="cases">
+      <article class="case feature">
+        <div>
+          <div class="case-top"><span class="tag">Performance · LangGraph</span><span class="mono" style="color:var(--muted);font-size:12px">Enterprise agent platform</span></div>
+          <h3 style="margin-top:12px">Reopening a past conversation went from painfully slow to near-instant.</h3>
+          <ul class="flow" style="margin-top:16px">
+            <li><b>Problem</b><span>Loading a past conversation rebuilt the whole agent and its tools just to read the message history.</span></li>
+            <li><b>Fix</b><span>Read the agent's saved state directly from storage instead, and fixed a background task that was silently failing.</span></li>
+            <li><b>Result</b><span>Roughly 30× faster, and conversations got proper auto-generated titles.</span></li>
+          </ul>
+        </div>
+        <div>
+          <div class="big">~30×</div>
+          <div class="compare" style="margin-top:18px" aria-label="Response time before and after">
+            <div class="cmp-row"><span>before</span><span class="cmp-bar"><i style="width:100%;background:var(--tool)"></i></span><span class="v">before</span></div>
+            <div class="cmp-row"><span>after</span><span class="cmp-bar"><i style="width:3.1%;background:var(--llm)"></i></span><span class="v">after</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="case">
+        <div class="case-top"><span class="tag">New capability</span></div>
+        <h3>Giving agents the live web, safely</h3>
+        <ul class="flow">
+          <li><b>Built</b><span>A "Web" capability so agents answer from live websites, either the whole web or a chosen list of sites.</span></li>
+          <li><b>Safety</b><span>An SSRF guard re-checked on every redirect, domain allow-lists and suffix-spoofing protection.</span></li>
+          <li><b>Extra</b><span>A key-free sitemap discovery backend, so search keeps working when shared search quotas run out.</span></li>
+        </ul>
+        <div class="chips"><span class="chip">FastAPI</span><span class="chip">React</span><span class="chip">LangGraph</span></div>
+      </article>
+
+      <article class="case">
+        <div class="case-top"><span class="tag">Observability</span></div>
+        <h3>Finding the emails nobody knew were lost</h3>
+        <ul class="flow">
+          <li><b>Problem</b><span>Messages filtered before the agent ran left no trace, so drops were invisible.</span></li>
+          <li><b>Fix</b><span>One outcome record per message across Mail, Teams, Webhook and A2A, with storage, a query API and skip-rate alerts.</span></li>
+          <li><b>Result</b><span>Surfaced silent message drops that had gone unnoticed, so they could be fixed.</span></li>
+        </ul>
+        <div class="chips"><span class="chip">Python</span><span class="chip">Postgres</span><span class="chip">Alerting</span></div>
+      </article>
+
+      <article class="case">
+        <div class="case-top"><span class="tag">Agent reliability</span></div>
+        <h3>Giving agents only the tools they need</h3>
+        <ul class="flow">
+          <li><b>Problem</b><span>Agents were given far more tools than intended, which confused them and caused failures.</span></li>
+          <li><b>Fix</b><span>A canonical per-agent tool allow-list, a data migration to backfill it, and strict enforcement at runtime.</span></li>
+          <li><b>Plus</b><span>Built MCP servers for cloud and IT-service tools, and a tool panel with search and bulk approval.</span></li>
+        </ul>
+        <div class="chips"><span class="chip">MCP</span><span class="chip">LangGraph</span><span class="chip">Migrations</span></div>
+      </article>
+
+      <article class="case">
+        <div class="case-top"><span class="tag">RAG quality</span></div>
+        <h3>Teaching agents to say "I don't know"</h3>
+        <ul class="flow">
+          <li><b>Problem</b><span>Agents with an empty knowledge base could invent answers and citations.</span></li>
+          <li><b>Fix</b><span>A clear no-data signal from retrieval, and citations that point to the exact source record instead of a raw data file.</span></li>
+        </ul>
+        <div class="chips"><span class="chip">RAG</span><span class="chip">PGVector</span><span class="chip">Citations</span></div>
+      </article>
+
+      <article class="case">
+        <div class="case-top"><span class="tag">Client project</span></div>
+        <h3>An AI service desk agent in Microsoft Teams</h3>
+        <ul class="flow">
+          <li><b>Built</b><span>A Microsoft Copilot Studio agent for a large consumer-goods company, connected to their ticketing system for tickets, notifications and status updates.</span></li>
+          <li><b>Reach</b><span>Available to 50,000+ employees in Microsoft Teams, with 50+ Power Automate workflows behind it.</span></li>
+          <li><b>Result</b><span>75% less manual L1 ticket handling.</span></li>
+        </ul>
+        <div class="chips"><span class="chip">Copilot Studio</span><span class="chip">MCP</span><span class="chip">Power Automate</span></div>
+      </article>
+    </div>
+  </section>
+
+  <section id="timeline">
+    <div class="sec-head">
+      <h2>Career, as a trace</h2>
+      <p>Every role is a span. Overlaps are real: I often carried client work alongside platform work.</p>
+    </div>
+    <div class="waterfall">
+      <div class="wf" role="table" aria-label="Career timeline from 2023 to 2026">
+        <div class="wf-axis" role="row"><span></span><div class="wf-ticks" aria-hidden="true"><span>2023</span><span>2024</span><span>2025</span><span>2026</span></div></div>
+        <div class="wf-row" role="row"><div class="wf-label" role="cell">IT management platform<small>100+ FastAPI APIs · device sync over Kafka</small></div><div class="wf-track"><span class="wf-span" style="--s:15%;--w:30%;--c:var(--tool)">Python backend</span></div></div>
+        <div class="wf-row" role="row"><div class="wf-label" role="cell">IT-ops AI agents<small>Entra ID reset, ticket approvals, FinOps</small></div><div class="wf-track"><span class="wf-span" style="--s:34%;--w:30%;--c:var(--llm)">LLM tools</span></div></div>
+        <div class="wf-row" role="row"><div class="wf-label" role="cell">Client service desk agent<small>Copilot Studio · Teams · ticketing</small></div><div class="wf-track"><span class="wf-span" style="--s:52%;--w:22%;--c:var(--accent)">Client agent</span></div></div>
+        <div class="wf-row" role="row"><div class="wf-label" role="cell">Enterprise AI agent platform<small>LangGraph agents, RAG, MCP, Teams/Copilot</small></div><div class="wf-track"><span class="wf-span" style="--s:42%;--w:58%;--c:var(--ink)">Core platform engineer</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="stack">
+    <div class="sec-head">
+      <h2>What I work with</h2>
+      <p>Tools I've used in production, not just tutorials.</p>
+    </div>
+    <div class="stack">
+      <div class="stack-col"><h3>Agents &amp; GenAI</h3><ul>
+        <li>LangGraph · LangChain<span>agents</span></li><li>RAG · PGVector<span>retrieval</span></li><li>MCP · A2A<span>tools</span></li><li>OpenAI · Azure OpenAI<span>models</span></li><li>Langfuse<span>tracing</span></li><li>Copilot Studio<span>low-code</span></li></ul></div>
+      <div class="stack-col"><h3>Backend</h3><ul>
+        <li>Python · asyncio<span>core</span></li><li>FastAPI · SQLAlchemy<span>APIs</span></li><li>PostgreSQL · PgBouncer<span>data</span></li><li>Redis · Celery<span>queues</span></li><li>Kafka · OpenSearch<span>streams</span></li><li>OAuth2 · JWT · SSO<span>auth</span></li></ul></div>
+      <div class="stack-col"><h3>Platform</h3><ul>
+        <li>Docker · Kubernetes<span>runtime</span></li><li>Helm<span>releases</span></li><li>Azure · Blob Storage<span>cloud</span></li><li>Azure DevOps CI/CD<span>delivery</span></li><li>Teams · Graph · Entra ID<span>M365</span></li><li>Pytest · Postman<span>testing</span></li></ul></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Beyond the code</h2></div>
+    <div class="beyond">
+      <div><h3>2 hackathons</h3><p>Ran events in Chennai and Trichy where students built AI security agents on our platform.</p></div>
+      <div><h3>Mentor &amp; SME</h3><p>Intern SPOC and platform expert; led client demos and helped on campus hiring for iLink Digital.</p></div>
+      <div><h3>Best Team Member</h3><p>Recognised for contributions to the product engineering team. B.E. ECE, Rajalakshmi Engineering College, 2023. Azure AZ-900.</p></div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact" aria-labelledby="contact-h">
+    <div>
+      <p class="eyebrow" style="color:color-mix(in srgb,var(--bg) 60%,transparent)">Let's talk</p>
+      <h2 id="contact-h">Building agents your users can trust?</h2>
+      <p>I'm open to AI Engineer, GenAI and Python backend roles in Chennai, Bengaluru or remote.</p>
+    </div>
+    <div class="c-list">
+      <div class="c-item"><div><span>Email</span><br><code id="email">Harish-gopi@outlook.com</code></div><button class="copy" id="copy-email" type="button">Copy</button></div>
+      <div class="c-item"><div><span>LinkedIn</span><br><a href="https://www.linkedin.com/in/harishgopi2001" target="_blank" rel="noopener">linkedin.com/in/harishgopi2001 ↗</a></div></div>
+      <div class="c-item"><div><span>GitHub</span><br><a href="https://github.com/harishg-ai" target="_blank" rel="noopener">github.com/harishg-ai ↗</a></div></div>
+      <div class="c-item"><div><span>Resume</span><br><a href="Harish_G_Resume.pdf" download>Download PDF ↓</a></div></div>
+    </div>
+  </section>
+
+  <footer><span>© 2026 Harish G · Chennai</span><span>Built as an agent trace, naturally.</span></footer>
+</main>
+
+<script>
+(function(){
+  var btn=document.getElementById('copy-email'), el=document.getElementById('email');
+  btn.addEventListener('click',function(){
+    var t=el.textContent;
+    function sel(){var r=document.createRange();r.selectNodeContents(el);var s=getSelection();s.removeAllRanges();s.addRange(r);btn.textContent='Selected';}
+    try{navigator.clipboard.writeText(t).then(function(){btn.textContent='Copied';},sel);}catch(e){sel();}
+    setTimeout(function(){btn.textContent='Copy';},2000);
+  });
+})();
+</script>
+
+</body>
+</html>
